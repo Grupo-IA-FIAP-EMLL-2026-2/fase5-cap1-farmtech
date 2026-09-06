@@ -61,7 +61,7 @@ jupyter lab notebooks\farmtech_desenvolvimento.ipynb
 > Se o PowerShell bloquear a ativação, rode uma vez:
 > `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
 
-**Conferência rápida de que está tudo certo** (deve imprimir o hash e `124 / 32`):
+**Conferência rápida da integridade do CSV** (deve imprimir o hash abaixo):
 
 ```powershell
 .\.venv\Scripts\python.exe -c "import hashlib,pandas as pd;from pathlib import Path;print(hashlib.sha256(Path('data/crop_yield.csv').read_bytes()).hexdigest().upper())"
@@ -389,11 +389,11 @@ Roteiro sugerido para o vídeo 1, já que o material existe:
 
 | # | Tarefa | Bloqueia |
 | --- | --- | --- |
-| 1 | Confirmar com a FIAP as unidades de `Yield` e `Precipitation` | Só o texto das métricas |
+| 1 | Confirmar com a FIAP as unidades de `Yield` e `Precipitation` | Interpretação; uma conversão pode exigir atualização das métricas e dos gráficos |
 | 2 | Reunir nomes completos e RMs dos quatro integrantes | Nomeação do notebook e README |
 | 3 | **Renomear** `farmtech_desenvolvimento.ipynb` → `NomeCompleto_rmXXXXX_pbl_fase4.ipynb` | Barema |
 | 4 | Confirmar no portal a inconsistência "Fase 5" com sufixo `pbl_fase4.ipynb` | Nomeação |
-| 5 | Criar e publicar o repositório remoto público | Entrega |
+| 5 | Disponibilizar o repositório como público e conferir o acesso antes da entrega | Entrega |
 | 6 | Integrar o material das frentes no notebook e no README | Entrega |
 | 7 | Submeter no portal e guardar comprovante — **sem commits depois** | Prazo |
 

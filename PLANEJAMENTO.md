@@ -36,7 +36,7 @@ Cada integrante explica sua parte. Responsáveis por apresentação, gravação 
 
 ## Cronograma revisto — 06 a 08/09
 
-O CSV já está disponível. Ambiente e arquivos adicionais estão em desenvolvimento por outra sessão; só marcar atividades concluídas depois de executar e verificar o resultado.
+O CSV, o ambiente e o núcleo técnico do notebook já estão preparados, executados e revisados. Faltam a escolha do modelo, o teste final, as cotações AWS, a implementação dos dois extras simulados e os vídeos. A tabela abaixo registra as metas; o estado detalhado e as instruções atuais estão em `docs/CONTINUIDADE_EQUIPE.md`.
 
 | Quando | Trabalho em paralelo | Marco esperado |
 | --- | --- | --- |

@@ -8,7 +8,8 @@ rendimento, o trabalho explora tendências por clusterização, investiga cenár
 compara cinco algoritmos de regressão para prever a produtividade.
 
 > ### 🚧 Estado do projeto: em desenvolvimento
-> A Entrega 1 (Machine Learning) está em **versão completa e executada**. A Entrega 2 (AWS) tem a
+> O núcleo técnico da Entrega 1 está **executado e revisado**; faltam a escolha do modelo, o teste
+> final e os itens de entrega indicados abaixo. A Entrega 2 (AWS) tem a
 > documentação e o checklist prontos, mas **as cotações ainda não foram feitas**. Os protótipos do
 > "Ir Além" têm arquitetura e contrato de mensagens especificados, mas **ainda não foram
 > implementados**. Nenhum dos quatro vídeos foi gravado.
@@ -190,7 +191,7 @@ Ambiente testado em **Windows 11 com Python 3.12.10**, em 06/09/2026.
 
 ```powershell
 # 1. Clonar e entrar na pasta do projeto
-git clone <url-do-repositorio>
+git clone https://github.com/Grupo-IA-FIAP-EMLL-2026-2/fase5-cap1-farmtech.git
 cd fase5-cap1-farmtech
 
 # 2. Criar o ambiente virtual
@@ -267,7 +268,7 @@ Organizadas por frente. Os responsáveis serão definidos pelo grupo.
 | --- | --- |
 | **Coordenação** | Confirmar unidades de `Yield` e `Precipitation` com a FIAP |
 | **Coordenação** | Reunir nomes completos e RMs; renomear o notebook |
-| **Coordenação** | Criar e publicar o repositório remoto público |
+| **Coordenação** | Disponibilizar o repositório como público e conferir o acesso antes da entrega |
 | **ML** | Revisar a seção 8 e definir `ALTERNATIVA_FINAL` |
 | **ML** | Executar a seção 9 (teste reservado) após o fechamento das escolhas |
 | **ML** | Classificador demonstrativo do Ir Além 2 |

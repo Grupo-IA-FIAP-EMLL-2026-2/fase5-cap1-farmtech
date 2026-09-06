@@ -52,8 +52,9 @@ jupyter lab notebooks\farmtech_desenvolvimento.ipynb
 | Ir Além 1 e 2 | ⏳ **especificados, não implementados** | `ir_alem/README.md` |
 | Vídeos | ❌ **nenhum gravado** | — |
 
-**Frase para não passar impressão errada:** *"A Entrega 1 está completa e já passou por uma
-revisão independente. Da Entrega 2 e dos dois extras existe a documentação — arquitetura, contrato
+**Situação para apresentar ao grupo:** *"O núcleo técnico da Entrega 1 está executado e revisado;
+a escolha do modelo e o teste final continuam pendentes. Da Entrega 2 e dos dois extras existe a
+documentação — arquitetura, contrato
 de mensagens, checklist da AWS —, mas as cotações e o código ainda não foram feitos."*
 
 ---
@@ -78,8 +79,8 @@ Estes são os pontos que fazem o trabalho ter qualidade. Se o grupo entender só
 > independentes entre si — podem ser anos seguidos da mesma região, por exemplo.
 >
 > A consequência prática: se dividíssemos as linhas ao acaso entre treino e teste, o modelo veria no
-> treino exatamente o mesmo clima que encontraria no teste, mudando só a cultura. A nota do modelo
-> ia ficar ótima e não ia querer dizer nada — ele estaria decorando, não generalizando.
+> treino condições climáticas também presentes no teste. Isso avaliaria uma situação diferente
+> da que queremos estudar: prever rendimento em cenários climáticos ainda não vistos.
 >
 > Por isso a divisão é **por cenário**: cada combinação de clima fica inteira de um lado só."
 
@@ -157,8 +158,8 @@ Estes são os pontos que fazem o trabalho ter qualidade. Se o grupo entender só
 > Sobre o KNN, eu levantei uma hipótese e **fui verificar** em vez de só afirmar. A hipótese era que
 > ele misturava culturas ao procurar vizinhos. Fui olhar de que cultura vinha cada vizinho: em só 16
 > das 124 linhas entra um vizinho de outra cultura — mas essas 16 linhas concentram **57% de todo o
-> erro dele**. Nas outras 108 linhas o KNN erra 3.328, menos que o modelo bobo. Então a hipótese se
-> confirmou, e agora com número.
+> erro dele**. Nas outras 108 linhas, o erro médio foi 3.328. Isso mostra onde os erros se
+> concentram; comparar esse subgrupo com a referência exigiria usar as mesmas 108 linhas.
 >
 > Um detalhe honesto: isso explica o KNN, cujos vizinhos dá para inspecionar. Para o SVR o mesmo
 > mecanismo é plausível, mas eu **não** demonstrei — deixei registrado como tarefa em aberto."
@@ -183,11 +184,10 @@ Estes são os pontos que fazem o trabalho ter qualidade. Se o grupo entender só
 ## 1. As unidades não batem — e isso é meu, para resolver
 
 > "O enunciado diz que o rendimento está em toneladas por hectare. Só que os valores vão de 5 mil a
-> 203 mil. Duzentas mil toneladas por hectare é impossível — o dendê, que é a cultura mais produtiva
-> do mundo, faz uns 20 t/ha.
+> 203 mil. Essa escala levanta uma dúvida sobre a unidade declarada.
 >
-> A precipitação tem o mesmo problema: diz 'mm por dia' e os valores vão até 3.086. Chover 3 metros
-> num dia só não acontece.
+> A precipitação exige a mesma conferência: a coluna diz 'mm por dia' e os valores vão até 3.086.
+> Precisamos confirmar a unidade e o período a que esses números se referem.
 >
 > Eu **não** vou chutar qual é a unidade certa. Qualquer palpite meu viraria número no relatório, e
 > a gente não sabe.
@@ -211,8 +211,8 @@ Estes são os pontos que fazem o trabalho ter qualidade. Se o grupo entender só
 > não é a mesma coisa. Isso está escrito em todo material, e vai ter que ser falado nos vídeos
 > também.
 >
-> A boa notícia: **as duas entregas obrigatórias não são afetadas.** Os extras não valem nota. Se
-> apertar o tempo, os extras são a primeira coisa a cortar."
+> **As duas entregas obrigatórias continuam com escopo completo.** Os dois extras permanecem no
+> plano como protótipos simulados, com os requisitos físicos não atendidos claramente declarados."
 
 ---
 
@@ -367,8 +367,9 @@ posição mudou, mas essa mudou — e é por isso que vale conferir o trabalho d
 
 # Encerramento
 
-> "Resumindo: a Entrega 1 está em primeira versão completa e executada. A Entrega 2 e os dois extras
-> não começaram. As instruções de cada frente estão em `docs/CONTINUIDADE_EQUIPE.md`, com comandos
+> "O núcleo técnico da Entrega 1 está executado e revisado; faltam a escolha do modelo e o teste
+> final. AWS e extras têm documentação preparada, com cotações e implementação pendentes. As
+> instruções de cada frente estão em `docs/CONTINUIDADE_EQUIPE.md`, com comandos
 > testados e critério de pronto.
 >
 > Escolham as frentes, e quem pegar ML e AWS pode começar hoje mesmo — não dependem de ninguém.

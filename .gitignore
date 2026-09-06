@@ -67,3 +67,6 @@ $RECYCLE.BIN/
 ir_alem/dados/*.sqlite
 ir_alem/dados/*.db
 *.log
+
+# Pacote local de apoio; a equipe usa o repositorio como fonte principal
+compartilhamento/
