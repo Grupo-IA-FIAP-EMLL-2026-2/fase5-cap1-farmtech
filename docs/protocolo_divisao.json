@@ -1,0 +1,33 @@
+{
+  "arquivo_dados": "data/crop_yield.csv",
+  "sha256_dados": "07B3335F497E08E705B5835EE334426AC16CB24732C1BFAA994254D39F771B1B",
+  "semente": 42,
+  "n_linhas": 156,
+  "n_cenarios": 39,
+  "divisao": "GroupShuffleSplit(n_splits=1, test_size=0.20, random_state=42), agrupado por 'cenario'",
+  "validacao": "GroupKFold(n_splits=5) aplicado somente ao desenvolvimento, agrupado por 'cenario'",
+  "desenvolvimento": {
+    "linhas": 124,
+    "cenarios": 31
+  },
+  "teste": {
+    "linhas": 32,
+    "cenarios": 8
+  },
+  "cenarios_teste": [
+    "154c73461399",
+    "1dccfe0180f0",
+    "4f37a2d386b6",
+    "b11b23c4a13e",
+    "bbac82ed07b9",
+    "d19ed8808b8c",
+    "dcbf3da4c6bb",
+    "f3dacef6642f"
+  ],
+  "versoes": {
+    "python": "3.12.10",
+    "numpy": "2.3.3",
+    "pandas": "2.3.2",
+    "scikit-learn": "1.7.1"
+  }
+}
