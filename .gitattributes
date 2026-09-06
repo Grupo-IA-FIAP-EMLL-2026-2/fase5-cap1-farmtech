@@ -1,0 +1,11 @@
+# Preservacao byte a byte da base original.
+#
+# O arquivo entregue pela FIAP usa finais de linha CRLF e o notebook verifica o
+# seu SHA-256 (07B3335F...F771B1B) antes de qualquer analise. Com core.autocrlf,
+# o Git normalizaria o conteudo para LF ao armazenar, e um clone em Linux/macOS
+# materializaria um arquivo com hash diferente - fazendo a verificacao de
+# integridade do notebook falhar.
+#
+# A marca "-text" desliga qualquer conversao de fim de linha para este arquivo:
+# os bytes armazenados sao exatamente os bytes originais, em qualquer sistema.
+data/crop_yield.csv -text
