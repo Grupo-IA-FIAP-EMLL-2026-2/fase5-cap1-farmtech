@@ -42,16 +42,19 @@ jupyter lab notebooks\farmtech_desenvolvimento.ipynb
 | Contrato de dados e protocolo | ✅ **implementado e verificado** | 6 verificações automáticas passando |
 | Análise exploratória | ✅ **executada** | 12 figuras geradas |
 | Clusterização | ✅ **executada** | k escolhido por estabilidade |
-| Outliers | ✅ **executada** | 2 critérios independentes |
-| **Cinco regressores + 2 referências** | ✅ **executados** | `docs/resultados_modelos.csv` |
-| Documentação para o grupo | ✅ **escrita** | 5 documentos |
+| Outliers | ✅ **executada** | 2 critérios, IQR e z robusto |
+| **Cinco regressores + 2 referências** | ✅ **executados** | validação aninhada, `docs/resultados_modelos.csv` |
+| Diagnóstico do KNN | ✅ **executado** | composição das vizinhanças, seção 8.4 |
+| Documentação para o grupo | ✅ **escrita** | 6 documentos |
+| Revisão independente | ✅ **aplicada** | `docs/REVISAO_E_AJUSTES_ETAPA_1.md` |
 | Teste final | ⏸️ **travado de propósito** | Seção 9, esperando decisão |
-| Entrega 2 (AWS) | ❌ **não iniciada** | — |
-| Ir Além 1 e 2 | ❌ **não iniciados** | — |
+| Entrega 2 (AWS) | ⏳ **documentada, não cotada** | checklist em `docs/aws/README.md` |
+| Ir Além 1 e 2 | ⏳ **especificados, não implementados** | `ir_alem/README.md` |
 | Vídeos | ❌ **nenhum gravado** | — |
 
-**Frase para não passar impressão errada:** *"A Entrega 1 está em primeira versão completa. A
-Entrega 2 e os dois extras não têm uma linha escrita ainda."*
+**Frase para não passar impressão errada:** *"A Entrega 1 está completa e já passou por uma
+revisão independente. Da Entrega 2 e dos dois extras existe a documentação — arquitetura, contrato
+de mensagens, checklist da AWS —, mas as cotações e o código ainda não foram feitos."*
 
 ---
 
@@ -68,7 +71,11 @@ Estes são os pontos que fazem o trabalho ter qualidade. Se o grupo entender só
 > mesma condição de clima, medida em quatro culturas.
 >
 > Isso **não** é duplicata, não dá para apagar: os rendimentos são diferentes porque as culturas são
-> diferentes. Mas significa que a gente tem 39 observações de clima independentes, não 156.
+> diferentes. Mas significa que a base descreve 39 condições de clima diferentes, não 156.
+>
+> Um cuidado de linguagem: eu falo em '39 cenários distintos', não em '39 observações
+> independentes'. Como a base não tem data nem local, não dá para saber se esses cenários são
+> independentes entre si — podem ser anos seguidos da mesma região, por exemplo.
 >
 > A consequência prática: se dividíssemos as linhas ao acaso entre treino e teste, o modelo veria no
 > treino exatamente o mesmo clima que encontraria no teste, mudando só a cultura. A nota do modelo
@@ -78,40 +85,45 @@ Estes são os pontos que fazem o trabalho ter qualidade. Se o grupo entender só
 
 **Números:** 124 linhas / 31 cenários para desenvolver, 32 linhas / 8 cenários reservados.
 
-## Achado 2 — A cultura explica 98,8% do rendimento
+## Achado 2 — A cultura responde por 98,8% da variação do rendimento
 
 **Mostre:** Figura 1 (escala linear vs. log) e a saída do eta² na seção 5.2.
 
 > "Olhem o gráfico da esquerda. O dendê é tão maior que as outras três culturas viram uma linha
 > achatada embaixo. Um dendê rende umas vinte vezes mais que um cacau.
 >
-> Isso tem uma consequência que quase derrubou a análise: **saber só a cultura já explica 98,8% da
-> variação do rendimento**. Eu criei um modelo bobo, que ignora o clima completamente e só chuta a
-> média da cultura. Ele tira **R² de 0,987**.
+> Isso tem uma consequência que quase derrubou a análise: **a diferença entre as culturas responde
+> por 98,8% da variação do rendimento** — é uma decomposição estatística da variância, não uma
+> afirmação de que a cultura *causa* isso. Eu criei um modelo bobo, que ignora o clima
+> completamente e só chuta a média da cultura. Ele tira **R² de 0,987**.
 >
-> Então se a gente escrever no relatório 'nosso modelo tem R² de 0,99', isso é verdade e é inútil —
-> significa só que ele aprendeu a diferenciar quatro culturas, coisa que a coluna já dava de graça.
+> Então se a gente escrever no relatório 'nosso modelo tem R² de 0,99', isso é verdade mas não prova
+> o que a gente quer: sozinho, esse número não diz se o modelo aprendeu algo sobre clima ou só
+> aprendeu a diferenciar quatro culturas, coisa que a coluna já dava de graça.
 >
 > Por isso comparei tudo **contra esse modelo bobo** e olhei as métricas **dentro de cada cultura**.
 > É aí que a pergunta de verdade aparece: o clima acrescenta alguma coisa?"
 
-## Achado 3 — O clima importa, mas só para arroz e borracha, em sentidos opostos
+## Achado 3 — A associação com o clima aparece mais em arroz e borracha, em sentidos opostos
 
 **Mostre:** Figura 3 (painel b) e Figura 7.
 
-> "E a resposta é: sim, mas só em duas das quatro culturas.
+> "E a resposta é: sim, mas a associação aparece de forma clara em duas das quatro culturas.
 >
 > O arroz rende mais quando está quente e o ar está úmido — correlação de +0,70 com umidade
-> específica e +0,61 com temperatura. A borracha faz exatamente o contrário: −0,43 e −0,41.
-> Cacau e dendê praticamente não respondem.
+> específica e +0,61 com temperatura. A borracha faz o contrário: −0,43 e −0,41. Em cacau e dendê as
+> correlações ficaram fracas.
 >
-> E o mais interessante: cheguei nisso por **três caminhos independentes** e os três deram a mesma
-> resposta — as correlações, os grupos de clima e o modelo. Quando três análises diferentes apontam
-> para o mesmo lugar, dá bem mais confiança do que qualquer uma sozinha.
+> Cheguei nisso por **três caminhos complementares** — as correlações, os grupos de clima e o modelo
+> — e os três apontaram para o mesmo lugar. Isso mostra que a análise é internamente coerente. Mas
+> atenção: são três leituras **dos mesmos 124 dados**, não três confirmações independentes. Elas
+> compartilham as mesmas limitações.
 >
-> Faz sentido agronomicamente: arroz irrigado gosta de calor e ar úmido, seringueira produz menos
-> látex em condição muito quente e abafada. Mas isso é **associação, não causa** — não temos nada
-> sobre solo, adubação ou manejo."
+> E duas coisas que eu **não** posso afirmar. Primeira: que o clima não afeta cacau e dendê — com 31
+> cenários e uma faixa de temperatura de só 1,2 grau, um efeito real e pequeno passaria batido.
+> Segunda: qualquer explicação de causa. A base não tem solo, adubação, manejo, variedade, nem
+> sequer o local ou o ano — então nem dá para dizer se o arroz era irrigado. O que eu tenho é a
+> associação nos números, e paro aí."
 
 ---
 
@@ -119,34 +131,50 @@ Estes são os pontos que fazem o trabalho ter qualidade. Se o grupo entender só
 
 **Mostre:** Figura 10.
 
-| Alternativa | MAE | R² geral | R² dentro de cada cultura (Cacau/Dendê/Arroz/Borracha) |
+| Alternativa | MAE | R² geral | Culturas em que supera a referência (por MAE) |
 | --- | --- | --- | --- |
-| **3. Floresta Aleatória** | **3.551** | 0,991 | **+0,13 / +0,24 / +0,46 / +0,04** |
-| 2. Árvore de Decisão | 4.340 | 0,985 | −0,18 / −0,26 / +0,18 / −0,51 |
+| **3. Floresta Aleatória** | **3.597** | 0,990 | **4 de 4** |
 | *Ref. média da cultura* | *4.772* | *0,987* | *referência* |
-| 1. Regressão Linear | 5.025 | 0,987 | −2,60 / −0,01 / +0,10 / −2,71 |
-| 4. KNN | 6.759 | 0,948 | −116 / −1,45 / −5,22 / −30,9 |
-| 5. SVR (RBF) | 7.365 | 0,975 | −35,3 / −0,37 / −1,21 / −24,8 |
+| 2. Árvore de Decisão | 4.800 | 0,982 | 2 de 4 — arroz e borracha |
+| 1. Regressão Linear | 5.025 | 0,987 | 2 de 4 — dendê e arroz |
+| 4. KNN | 6.759 | 0,948 | 0 de 4 |
+| 5. SVR (RBF) | 7.365 | 0,975 | 0 de 4 |
 
-> "Olhem a coluna do R² geral: todos entre 0,95 e 0,99. Parece que está tudo ótimo.
+> "Olhem a coluna do R² geral: todos entre 0,95 e 0,99. Parece que está tudo ótimo — inclusive o
+> modelo bobo, com 0,987.
 >
-> Agora a última coluna, que é o que interessa. Verde é 'melhor que chutar a média da cultura'.
-> **Só a Floresta Aleatória consegue isso nas quatro culturas.** Três dos cinco algoritmos são
-> **piores** do que o chute — mesmo com R² de 0,99.
+> Agora a última coluna, que é o que interessa: em quantas culturas cada um erra menos que o chute
+> da média da cultura. **Só a Floresta Aleatória consegue nas quatro.** A árvore e a regressão
+> linear conseguem em duas cada, mas em culturas diferentes. KNN e SVR não conseguem em nenhuma.
 >
-> O KNN e o SVR quebram feio. Eu diagnostiquei o motivo: eles trabalham por distância, e como as
-> culturas viram variáveis binárias padronizadas, eles acabam misturando vizinhos de culturas
-> diferentes. Errar entre um cacau e um dendê custa dezenas de milhares de unidades.
+> Uma coisa importante que eu preciso dizer aqui: **essa tabela mudou depois da revisão.** Antes, a
+> busca dos parâmetros de cada modelo usava os mesmos dados que depois mediam o resultado — isso
+> deixava os números otimistas. Corrigi para uma validação aninhada, em que a busca acontece só
+> dentro do treino de cada partição. A árvore de decisão, que aparecia **melhor** que o modelo bobo,
+> passou a aparecer **pior**. A ordem mudou. É exatamente o tipo de erro que só aparece quando
+> alguém confere.
 >
-> Já testei uma correção — transformar o alvo em log — e o ganho está medido no notebook. Quem pegar
-> a frente de ML tem esse caminho pronto para seguir."
+> Sobre o KNN, eu levantei uma hipótese e **fui verificar** em vez de só afirmar. A hipótese era que
+> ele misturava culturas ao procurar vizinhos. Fui olhar de que cultura vinha cada vizinho: em só 16
+> das 124 linhas entra um vizinho de outra cultura — mas essas 16 linhas concentram **57% de todo o
+> erro dele**. Nas outras 108 linhas o KNN erra 3.328, menos que o modelo bobo. Então a hipótese se
+> confirmou, e agora com número.
+>
+> Um detalhe honesto: isso explica o KNN, cujos vizinhos dá para inspecionar. Para o SVR o mesmo
+> mecanismo é plausível, mas eu **não** demonstrei — deixei registrado como tarefa em aberto."
 
 **Ponto de honestidade a mencionar:**
 
-> "Duas ressalvas. Primeira: com 31 cenários só, as barras de erro são grandes. A Floresta é
+> "Três ressalvas. Primeira: com 31 cenários só, as barras de erro são grandes. A Floresta é
 > consistentemente melhor, mas eu **não** afirmaria que a diferença está estatisticamente provada.
-> Segunda: o teste final **não foi rodado**. Está travado de propósito, esperando a gente fechar a
-> escolha. Se rodar antes e depois mudar o modelo, o número final deixa de valer."
+>
+> Segunda: mesmo com a validação aninhada, escolher o vencedor olhando essas métricas ainda é uma
+> escolha. Só o teste reservado resolve isso de verdade.
+>
+> Terceira: o teste final **não foi rodado**. Está travado de propósito, e agora ele nem sabe qual
+> modelo usar — quem pegar a frente de ML precisa registrar a escolha numa variável, senão o
+> notebook para com uma mensagem de erro. Isso foi de propósito: antes ele estava com a Floresta
+> fixa no código, e se a gente escolhesse outro modelo ia avaliar o errado sem avisar."
 
 ---
 
@@ -158,15 +186,20 @@ Estes são os pontos que fazem o trabalho ter qualidade. Se o grupo entender só
 > 203 mil. Duzentas mil toneladas por hectare é impossível — o dendê, que é a cultura mais produtiva
 > do mundo, faz uns 20 t/ha.
 >
-> A precipitação tem o mesmo problema: diz 'mm por dia' e os valores vão até 3.086. Isso é chuva de
-> um ano, não de um dia.
+> A precipitação tem o mesmo problema: diz 'mm por dia' e os valores vão até 3.086. Chover 3 metros
+> num dia só não acontece.
 >
-> **Minha suspeita** é que o rendimento esteja em hectogramas por hectare, que é o padrão da base da
-> FAO — aí 203.399 hg/ha dá 20,3 t/ha, que faz sentido. Mas isso é suposição minha.
+> Eu **não** vou chutar qual é a unidade certa. Qualquer palpite meu viraria número no relatório, e
+> a gente não sabe.
 >
 > Então **não converti nada**. Deixei os valores originais e reporto o erro na unidade do arquivo,
-> mais o erro percentual, que não depende da unidade. Eu confirmo com a FIAP. Quando confirmar, só o
-> texto muda — nenhum número da análise é afetado."
+> mais o erro percentual. Eu confirmo com a FIAP.
+>
+> E uma correção que a revisão me apontou: eu tinha dito que, quando confirmasse, só o texto mudaria.
+> Isso está errado. Se a resposta for que os valores precisam ser convertidos — divididos por dez
+> mil, por exemplo —, o **MAE e o RMSE mudam** na mesma proporção, e as escalas dos gráficos também.
+> O que **não** muda são o R² e o erro percentual, porque eles não dependem da escala. A ordem entre
+> os modelos também se mantém. Está tudo detalhado na seção 3.3 do notebook."
 
 ## 2. Não temos ESP32 — o que muda
 
@@ -196,7 +229,7 @@ o teste final. Depois, o classificador do Ir Além 2.
 **Já pronto:** tudo executado, com os resultados na mesa. É revisão e fechamento, não construção
 do zero.
 
-**Exige:** entender o notebook a ponto de explicar. Quem pegar essa frente grava o vídeo 1.
+**Exige:** entender o notebook a ponto de explicar.
 
 **Começa:** imediatamente, não depende de ninguém.
 
@@ -254,7 +287,7 @@ Quem grava ainda não está definido — pode ser quem fez a frente ou não.
 | Tempo | Conteúdo | O que mostrar |
 | --- | --- | --- |
 | 0:00–0:30 | A base: 156 linhas, 4 culturas, mas só 39 cenários de clima | Seção 3.1 |
-| 0:30–1:30 | EDA: a cultura explica 98,8% — o R² alto é armadilha | Figuras 1 e 3 |
+| 0:30–1:30 | EDA: a cultura responde por 98,8% da variação — o R² sozinho não basta | Figuras 1 e 3 |
 | 1:30–2:30 | Clusters: três regimes, escolhidos por estabilidade | Figuras 5 e 6 |
 | 2:30–3:00 | Outliers: nenhum rendimento atípico; e o contraexemplo | Figura 9 |
 | 3:00–4:15 | Modelos: só a Floresta supera a referência | Figura 10 |
@@ -282,7 +315,7 @@ Coordenação: nomes/RMs ──► renomear notebook ──► publicar reposit�
 ```
 
 **Caminho crítico:** `IoT-1 → IoT-2 → IoT-3 → IoT-4 → ML-4 → Vídeo 4`. É a cadeia mais longa e a de
-maior risco técnico. Se atrasar, o Ir Além 2 é o primeiro item a sacrificar.
+maior risco técnico — convém acompanhá-la de perto nos alinhamentos de 12h e 18h.
 
 **Independentes, podem começar já:** ML e AWS.
 
@@ -312,14 +345,23 @@ avaliada. Não vou prometer pontuação. O que fazemos é entregar bem feito e d
 foi e o que não foi atendido.
 
 **"Por que não removeu os outliers?"**
-Porque não existem. Testei dois critérios dentro de cada cultura e nenhum rendimento ficou fora.
-E mostro no notebook o que aconteceria com o critério aplicado errado, sem separar por cultura:
-marcaria 27 linhas como anômalas — o dendê inteiro. Não seria detectar anomalia, seria descobrir que
-o dendê rende mais.
+Porque os dois critérios que apliquei — IQR e escore z robusto, dentro de cada cultura — não
+marcaram nenhum rendimento nas 124 linhas de desenvolvimento. Isso é o que esses dois critérios
+dizem sobre esses dados; não é uma garantia de que não exista nada estranho por outros critérios.
+E mostro no notebook o que aconteceria sem separar por cultura: marcaria 27 das 31 linhas de dendê.
+Não seria detectar anomalia, seria descobrir que o dendê opera numa escala maior que as outras.
 
 **"Dá para melhorar os modelos?"**
-Dá, e deixei o caminho medido: transformar o alvo em log já melhora bastante a regressão linear.
-Mas com 31 cenários, o teto é baixo. O ganho maior seria mais dados, não mais ajuste.
+Dá, e deixei o caminho medido: transformar o alvo em log leva a regressão linear a errar menos que o
+modelo bobo nas quatro culturas — embora pelo R² ela só ganhe em duas, e essa discordância entre as
+métricas é uma decisão que a frente de ML vai ter que tomar. Mas com 31 cenários o teto é baixo: o
+ganho maior viria de mais dados, não de mais ajuste.
+
+**"Por que a tabela dos modelos mudou depois da revisão?"**
+Porque a busca dos hiperparâmetros usava as mesmas partições que depois mediam o resultado, o que
+deixava os números otimistas. Agora a busca roda só dentro do treino de cada partição. O efeito foi
+real: a árvore de decisão saiu de 4.340 (melhor que o modelo bobo) para 4.800 (pior). Nenhuma outra
+posição mudou, mas essa mudou — e é por isso que vale conferir o trabalho dos outros.
 
 ---
 

@@ -1,7 +1,7 @@
 # Continuidade do trabalho — instruções por frente
 
 **FarmTech Solutions — Fase 5**
-Atualizado em 06/09/2026 · Prazo: **08/09/2026, 23:59 (Brasília)** · Meta interna: **08/09, 22h**
+Atualizado em 06/09/2026 (revisado) · Prazo: **08/09/2026, 23:59 (Brasília)** · Meta interna: **08/09, 22h**
 
 ---
 
@@ -30,8 +30,9 @@ escrita em todo material: os requisitos de **ESP32 real, coleta física e valida
 permanecem NÃO ATENDIDOS**. Uma simulação funcionando demonstra o software e a comunicação — não
 cumpre o requisito de hardware. Detalhes em [`AJUSTE_IR_ALEM_SIMULADO.md`](AJUSTE_IR_ALEM_SIMULADO.md).
 
-**2. As duas entregas obrigatórias seguem com escopo completo.** A Entrega 1 (ML) está em primeira
-versão executada; a Entrega 2 (AWS) ainda não foi iniciada.
+**2. As duas entregas obrigatórias seguem com escopo completo.** A Entrega 1 (ML) está executada e
+já passou por uma revisão independente, cujas correções foram aplicadas. Da Entrega 2 (AWS) existe a
+documentação e o checklist; faltam as cotações.
 
 ---
 
@@ -82,43 +83,51 @@ Tudo na Entrega 1 abaixo já foi **implementado e executado**, não é plano:
 | EDA completa com 12 figuras | ✅ executado |
 | Clusterização com escolha justificada de k | ✅ executado |
 | Investigação de outliers | ✅ executado |
-| **Cinco regressores + duas referências** | ✅ executado |
+| **Cinco regressores + duas referências**, em validação aninhada | ✅ executado |
 | Verificação de sensibilidade com log do alvo | ✅ executado |
+| Diagnóstico do mau desempenho do KNN | ✅ executado |
 | Avaliação no teste reservado | ⏸️ **travada, esperando você** |
 
 ## Arquivos para abrir
 
-1. **[`docs/CONTRATO_DADOS.md`](CONTRATO_DADOS.md)** — comece por aqui. São nove regras; siga todas.
+1. **[`docs/CONTRATO_DADOS.md`](CONTRATO_DADOS.md)** — comece por aqui e siga todas as regras.
 2. **[`notebooks/farmtech_desenvolvimento.ipynb`](../notebooks/farmtech_desenvolvimento.ipynb)** —
    seções 8 e 9 são as suas.
-3. **`docs/resultados_modelos.csv`** — tabela de resultados exportada.
+3. **`docs/resultados_modelos.csv`** e **`docs/resultados_por_cultura.csv`** — tabelas exportadas.
 4. **`docs/protocolo_divisao.json`** — a divisão exata, para você reproduzir.
 
 ## Resultado atual, em uma tabela
 
-Previsões de validação, 124 linhas do desenvolvimento, `GroupKFold` de 5 partições:
+Previsões da **validação cruzada aninhada** (5 partições externas × 3 internas), 124 linhas do
+desenvolvimento:
 
-| Alternativa | MAE | RMSE | R² | MAPE | Supera a referência? |
+| Alternativa | MAE | RMSE | R² | MAPE | Culturas em que supera a referência |
 | --- | --- | --- | --- | --- | --- |
-| **3. Floresta Aleatória** | **3.551** | 6.651 | 0,991 | 11,0% | **Sim, nas 4 culturas** |
-| 2. Árvore de Decisão | 4.340 | 8.506 | 0,985 | 13,0% | Só no arroz |
+| **3. Floresta Aleatória** | **3.597** | 6.804 | 0,990 | 11,2% | **4 de 4** |
 | *Ref. média da cultura* | *4.772* | *7.846* | *0,987* | *14,2%* | *referência* |
-| 1. Regressão Linear | 5.025 | 7.915 | 0,987 | 19,5% | Só no arroz |
-| 4. KNN | 6.759 | 15.723 | 0,948 | 35,4% | Não |
-| 5. SVR (RBF) | 7.365 | 11.001 | 0,975 | 39,6% | Não |
+| 2. Árvore de Decisão | 4.800 | 9.364 | 0,982 | 13,0% | 2 de 4 (arroz, borracha) |
+| 1. Regressão Linear | 5.025 | 7.915 | 0,987 | 19,5% | 2 de 4 (dendê, arroz) |
+| 4. KNN | 6.759 | 15.723 | 0,948 | 35,4% | 0 de 4 |
+| 5. SVR (RBF) | 7.365 | 11.001 | 0,975 | 39,6% | 0 de 4 |
 | *Ref. média global (Dummy)* | *58.898* | *69.146* | *−0,000* | *340,8%* | — |
 
-**Leia esta tabela com cuidado:** o R² alto é uma armadilha. A referência que só prevê a média da
-cultura, sem olhar clima nenhum, já chega a R² = 0,987. O que separa os modelos é o **R² dentro de
-cada cultura**:
+**Leia esta tabela com cuidado:** o R² alto não basta. A referência que só prevê a média da cultura,
+sem olhar clima nenhum, já chega a R² = 0,987. O que separa as alternativas é o desempenho **dentro
+de cada cultura**, comparado ao da referência. A métrica adotada é o **MAE dentro da cultura**:
 
-| Alternativa | Cacau | Dendê | Arroz | Borracha |
+| Alternativa (MAE) | Cacau | Dendê | Arroz | Borracha |
 | --- | --- | --- | --- | --- |
-| **Floresta Aleatória** | **+0,13** | **+0,24** | **+0,46** | **+0,04** |
-| Árvore de Decisão | −0,18 | −0,26 | +0,18 | −0,51 |
-| Regressão Linear | −2,60 | −0,01 | +0,10 | −2,71 |
-| SVR (RBF) | −35,3 | −0,37 | −1,21 | −24,8 |
-| KNN | −116,1 | −1,45 | −5,22 | −30,9 |
+| **Floresta Aleatória** | **1.113** | **9.418** | **2.508** | **1.348** |
+| *Ref. média da cultura* | *1.298* | *12.288* | *3.884* | *1.616* |
+| Árvore de Decisão | 1.342 | 13.549 | **2.933** | **1.376** |
+| Regressão Linear | 2.215 | **11.973** | **3.385** | 2.526 |
+| SVR (RBF) | 5.456 | 13.541 | 5.181 | 5.281 |
+| KNN | 5.956 | 12.684 | 5.359 | 3.036 |
+
+⚠️ **Atenção a uma armadilha de leitura:** um R² negativo **não** significa perder para a
+referência. O zero do R² é a média da cultura no conjunto avaliado, enquanto a referência usa médias
+aprendidas no treino de cada partição — por isso a própria referência tem R² negativo. A regressão
+linear, por exemplo, tem R² = −0,013 no dendê e **supera** a referência, cujo R² ali é −0,039.
 
 ## Suas tarefas
 
@@ -128,51 +137,67 @@ Você precisa **entender e conseguir explicar** o código antes de assumi-lo. Co
 
 - [ ] O pipeline não vaza: escalonamento e codificação são reajustados em cada partição.
 - [ ] O SVR usa `TransformedTargetRegressor` para escalar `y` **dentro** da partição.
-- [ ] Todas as sete alternativas usam a mesma lista `PARTICOES`.
-- [ ] A busca de hiperparâmetros foi pequena e está registrada.
+- [ ] Todas as sete alternativas usam a mesma lista `PARTICOES` no nível externo.
+- [ ] A busca de hiperparâmetros roda nas partições **internas**, formadas só com o treino externo.
+- [ ] As comparações com a referência são geradas por código, não digitadas à mão.
 
-**Ponto que exige uma decisão sua:** a busca usou as mesmas partições da avaliação, o que torna as
-métricas da seção 8 levemente otimistas. É aceitável para o escopo do trabalho, desde que declarado
-— e está declarado na seção 10.3. Se preferir uma validação aninhada, o custo computacional é baixo
-(o conjunto tem 124 linhas).
+**O que já foi corrigido e por quê.** Uma versão anterior fazia a busca de hiperparâmetros nas
+mesmas partições usadas para reportar as métricas. Isso deixava os números otimistas: a árvore de
+decisão aparecia com MAE 4.340, **abaixo** da referência, e com a validação aninhada passou a 4.800,
+**acima** dela. A ordem entre alternativas mudou — vale a pena olhar isso antes de confiar em
+qualquer comparação apertada.
+
+**Ponto que ainda exige atenção:** o aninhamento removeu o viés da escolha de *hiperparâmetros*, mas
+escolher a alternativa vencedora olhando estas mesmas métricas continua sendo uma seleção. Só o
+teste reservado resolve isso, e ele é usado uma vez, depois de você fechar a escolha.
 
 **Critério de pronto:** você consegue explicar, sem consultar o notebook, por que o R² global de
-0,99 não significa que os modelos entenderam o clima.
+0,99 não é suficiente para dizer que os modelos entenderam o clima.
 
 ### Tarefa ML-2 — Avaliar a recomendação do log do alvo
 
-A seção 8.4 já testou transformar o alvo em log, e o ganho está medido:
+A seção 8.5 já testou transformar o alvo em log, **com o mesmo desenho aninhado**:
 
-| Modelo | R² dentro da cultura, escala original | R² dentro da cultura, com log |
-| --- | --- | --- |
-| Regressão Linear | −2,60 / −0,01 / +0,10 / −2,71 | **−0,05 / −0,14 / −0,05 / −0,12** |
-| SVR | −35,3 / −0,37 / −1,21 / −24,8 | −3,29 / −3,40 / **+0,35** / −1,73 |
-| KNN | −116 / −1,45 / −5,22 / −30,9 | −11,8 / −4,92 / −1,01 / −2,04 |
+| Modelo | MAE (escala original) | MAE (com log) | Culturas superadas por MAE | Por R² |
+| --- | --- | --- | --- | --- |
+| Regressão Linear | 5.025 | **4.571** | **4 de 4** | 2 de 4 |
+| SVR | 7.365 | 7.161 | 0 de 4 | 0 de 4 |
+| KNN | 6.759 | 6.611 | 0 de 4 | 0 de 4 |
 
-A regressão linear deixa de ser desastrosa e seu MAE cai de 5.025 para **4.571**, abaixo da
-referência. Nenhum deles alcança a Floresta Aleatória.
+**Aqui as duas métricas discordam, e a decisão é sua.** A regressão linear com log tem MAE menor que
+o da referência nas quatro culturas, mas R² maior em apenas duas — porque o log reduz os erros
+típicos e mantém alguns erros grandes, que o R² penaliza mais. Nenhuma das variantes alcança a
+Floresta Aleatória (MAE 3.597).
 
-**Decisão sua:** incorporar o log à comparação principal ou mantê-lo como verificação de
-sensibilidade. Segundo caminho ainda não testado, se sobrar tempo: dar peso maior à variável de
-cultura no espaço de distâncias do KNN/SVR, ou treinar um modelo por cultura.
+**Decisões suas:** (a) incorporar o log à comparação principal ou mantê-lo como verificação de
+sensibilidade; (b) qual métrica governa a escolha final.
 
-**Critério de pronto:** decisão registrada em markdown no notebook, com justificativa.
+Caminhos ainda não testados, se sobrar tempo: reduzir a mistura de culturas diagnosticada na seção
+8.4 (ampliando o peso das colunas de cultura no espaço de distâncias, ou ajustando um modelo por
+cultura), e fazer um diagnóstico próprio do SVR — o da seção 8.4 explica o KNN, não o SVR.
+
+**Critério de pronto:** decisão registrada em markdown no notebook, com justificativa e métrica
+declarada.
 
 ### Tarefa ML-3 — Fechar a escolha e liberar o teste final
 
 Depois de ML-1 e ML-2, e **só depois**:
 
-1. Fixe o algoritmo e os hiperparâmetros.
-2. Confirme com o grupo que nada mais será testado.
-3. Mude `EXECUTAR_TESTE_FINAL = False` para `True` na seção 9.
-4. Execute o notebook **inteiro, uma vez**: `Kernel > Restart Kernel and Run All Cells`.
+1. Registre a escolha em `ALTERNATIVA_FINAL`, na seção 9. O catálogo `CONFIGURACOES_FINAIS` já traz
+   as cinco alternativas e as três variantes com log, cada uma com pipeline e grade prontos.
+   Enquanto `ALTERNATIVA_FINAL` for `None`, a avaliação falha de propósito, com mensagem explícita.
+2. Confirme com o grupo que nenhuma outra alternativa será comparada depois.
+3. Mude `EXECUTAR_TESTE_FINAL = False` para `True`.
+4. Execute o notebook inteiro: `Kernel > Restart Kernel and Run All Cells`.
 5. Escreva a interpretação do resultado.
 
-> ⚠️ Se depois de ver o resultado do teste alguém quiser trocar o modelo, a métrica final deixa de
-> ser independente. Nesse caso, declare isso explicitamente no notebook em vez de esconder.
+> ⚠️ **O que invalida o teste.** Reexecutar o notebook e obter os mesmos números não invalida nada —
+> o procedimento é determinístico, e o professor precisa conseguir rodar tudo na correção. O que
+> invalida é **olhar o resultado do teste e então mudar de modelo**. Se isso acontecer, declare no
+> notebook em vez de esconder.
 
-**Critério de pronto:** seção 9 executada uma única vez, com métricas gerais e por cultura, e um
-parágrafo comparando o desempenho no teste com o da validação.
+**Critério de pronto:** seção 9 executada com a alternativa escolhida registrada, métricas gerais e
+por cultura, e um parágrafo comparando o desempenho no teste com o da validação.
 
 ### Tarefa ML-4 — Classificador demonstrativo (Ir Além 2)
 
@@ -199,8 +224,10 @@ seção de limitações que diz claramente que não há validação agronômica.
 
 ## Situação de partida
 
-**Nada foi implementado nesta frente.** O que existe é a especificação da arquitetura e o contrato
-de mensagens em [`ir_alem/README.md`](../ir_alem/README.md), preparados para você começar.
+**A arquitetura e o contrato de mensagens já estão especificados** em
+[`ir_alem/README.md`](../ir_alem/README.md), incluindo a restrição técnica do gateway do Wokwi e as
+restrições de rotulagem. **O código ainda não foi escrito** — firmware, receptor e classificador são
+tarefas suas.
 
 ## Arquitetura definida
 
@@ -270,8 +297,12 @@ Combine com a frente ML antes de gerar:
 
 ## Situação de partida
 
-**Nada foi cotado.** `docs/aws/` está criada e vazia, com um checklist. Não há preço, captura nem
-link neste repositório — e não deve haver nenhum inventado.
+A **documentação da frente já existe**: `docs/aws/README.md` traz a especificação exigida, o
+checklist completo, as instâncias candidatas já verificadas e as duas armadilhas mapeadas. A seção
+da Entrega 2 no README também está estruturada, com os campos a preencher.
+
+**O que falta é a execução:** as cotações na calculadora oficial, as capturas e a redação da
+justificativa. Não há preço, captura nem link neste repositório — e nenhum deve ser inventado.
 
 ## Especificação exigida pelo enunciado
 
@@ -345,10 +376,11 @@ README. Quem grava cada um ainda não foi definido.
 Roteiro sugerido para o vídeo 1, já que o material existe:
 
 1. (30s) Base: 156 linhas, 4 culturas, mas só 39 cenários climáticos.
-2. (60s) EDA: a cultura explica 98,8% da variação — mostrar Figura 1 e Figura 3.
+2. (60s) EDA: a cultura responde por 98,8% da variação — mostrar Figura 1 e Figura 3.
 3. (60s) Clusters: três regimes, escolha por estabilidade — Figuras 5 e 6.
-4. (30s) Outliers: nenhum rendimento atípico; mostrar o contraexemplo da Figura 9.
-5. (75s) Modelos: Figura 10, a comparação contra a referência da média da cultura.
+4. (30s) Outliers: nenhum rendimento marcado pelos dois critérios; contraexemplo da Figura 9.
+5. (75s) Modelos: Figura 10, a comparação contra a referência da média da cultura, em validação
+   aninhada.
 6. (30s) Limitações e o que ficou pendente.
 
 ---
@@ -383,10 +415,10 @@ AWS-1 (cotar) ──► AWS-2 (justificar) ──► AWS-3 (README) ──► V�
 Coordenação-2 (nomes/RMs) ──► Coordenação-3 (renomear) ──► Coordenação-7 (submeter)
 ```
 
-**Caminho crítico:** `IoT-1 → IoT-2 → IoT-3 → IoT-4 → ML-4 → Vídeo 4`. É a cadeia mais longa e a que
-tem mais risco técnico. Se atrasar, o Ir Além 2 é o item a sacrificar — ele não vale nota.
+**Caminho crítico:** `IoT-1 → IoT-2 → IoT-3 → IoT-4 → ML-4 → Vídeo 4`. É a cadeia mais longa e a de
+maior risco técnico — convém acompanhá-la de perto nos alinhamentos.
 
-**Frentes independentes:** AWS e ML não dependem de ninguém e podem começar imediatamente.
+**Frentes que podem começar imediatamente:** AWS e ML não dependem de ninguém.
 
 ---
 
@@ -398,6 +430,9 @@ Lista de verificação antes de publicar qualquer texto, vídeo ou figura:
 - ❌ "Os 39 cenários são 39 anos" — a base não tem coluna de data.
 - ❌ "O clima causa o rendimento" — há associação, não causalidade demonstrada.
 - ❌ "Modelo X é o melhor" com base no teste — o teste ainda não foi executado.
+- ❌ "Os 39 cenários são observações independentes" — não há como verificar, sem data ou origem.
+- ❌ "O clima não afeta o cacau e o dendê" — as associações foram fracas *nesta amostra*, o que não
+  demonstra ausência de efeito.
 - ❌ "Coletamos dados dos sensores" — os dados são simulados no Wokwi.
 - ❌ "Validamos a saúde das plantas" — não há observação agronômica real.
 - ❌ "O ESP32 foi testado" — não há hardware físico.

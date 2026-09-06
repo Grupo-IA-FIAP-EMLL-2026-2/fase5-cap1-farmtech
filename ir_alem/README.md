@@ -250,6 +250,6 @@ ir_alem/
 | 9 | Exibir o resultado na tela | Demonstração funcionando, com aviso de simulação |
 | 10 | Figura da arquitetura correspondendo ao que foi implementado | Figura em `docs/figuras/` |
 
-**Se o tempo ficar curto:** o Ir Além 1 (tarefas 1 a 5) funciona sozinho e já demonstra coleta e
-comunicação. O Ir Além 2 depende dele. Nenhum dos dois vale nota — em caso de conflito, as entregas
-obrigatórias têm prioridade absoluta.
+**Ordem de dependência:** o Ir Além 1 (tarefas 1 a 5) funciona sozinho e já demonstra coleta e
+comunicação; o Ir Além 2 depende dele. Ambos permanecem no escopo do trabalho. Qualquer decisão
+sobre prioridades ou redução de escopo cabe ao grupo.

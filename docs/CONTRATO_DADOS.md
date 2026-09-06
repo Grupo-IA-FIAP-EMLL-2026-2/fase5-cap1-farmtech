@@ -1,7 +1,7 @@
 # Contrato de dados e protocolo de avaliação
 
 **FarmTech Solutions — Fase 5, Entrega 1**
-Versão 1.0 — 06/09/2026
+Versão 1.1 — 06/09/2026 (revisada após revisão independente)
 
 Este documento fixa as regras que **todos os integrantes devem seguir** ao trabalhar com
 `data/crop_yield.csv`. O mesmo protocolo está implementado nas seções 3 e 4 do notebook
@@ -78,26 +78,31 @@ Este é o ponto mais importante do contrato e precisa ser lido por todos.
 | `Yield` | toneladas por hectare | 5.249 a 203.399 | **Não.** 200 mil t/ha é agronomicamente impossível |
 | `Precipitation (mm day-1)` | milímetros por dia | 1.934 a 3.086 | **Não.** 3.000 mm/dia é impossível; a faixa corresponde a um acumulado anual |
 
-### Hipótese (não confirmada)
-
-`Yield` estaria em **hectogramas por hectare (hg/ha)**, unidade usada em bases do tipo FAOSTAT.
-Nesse caso 203.399 hg/ha ≈ 20,3 t/ha para o dendê, valor plausível. A precipitação seria um
-**acumulado anual** em mm.
-
-**Isto é uma leitura nossa dos números, não uma informação verificada.** Está registrada aqui como
-hipótese justamente para não ser confundida com fato.
+Há, portanto, uma diferença entre a **unidade declarada no enunciado** e a **unidade efetiva do
+arquivo, que não foi verificada**. Não sabemos qual é a unidade real e **não adotamos nenhuma
+hipótese** — supor uma converteria um palpite em número de relatório.
 
 ### Regras enquanto a dúvida não for resolvida
 
 1. **Não converter nada.** Os valores originais são usados como estão, em todas as análises.
 2. **Reportar MAE e RMSE como "unidades de rendimento do arquivo"**, nunca como "t/ha".
-3. **Incluir MAPE (erro percentual)** ao lado, por ser independente da unidade e comparável entre
+3. **Incluir MAPE (erro percentual)** ao lado, por não depender da escala e ser comparável entre
    culturas de magnitudes diferentes.
 4. **Não afirmar** que os 39 cenários correspondem a 39 anos, safras ou regiões. A base não tem
    coluna de data, local ou identificação de fazenda.
 
-> **Pendência:** o coordenador deve confirmar as unidades com a FIAP. Quando confirmadas, só o
-> **texto** das métricas muda — nenhum resultado numérico é afetado.
+### O que muda quando a unidade for confirmada
+
+Depende do que a confirmação exigir — **não é verdade que apenas o texto mude**:
+
+| Situação | Efeito |
+| --- | --- |
+| A unidade é apenas **renomeada** (os números já estão certos) | Muda só o texto. |
+| Os valores precisam ser **convertidos por um fator constante** | **MAE e RMSE mudam** na mesma proporção, e as escalas dos eixos dos gráficos também. **R² e MAPE não mudam**, por serem invariantes a uma multiplicação consistente de observados e previstos. A ordem entre as alternativas se mantém. |
+| A correção altera os **dados usados no treino** | É preciso revisar transformações e parâmetros sensíveis à escala (SVR e a variante com log do alvo) e reexecutar a comparação. |
+
+> **Pendência:** o coordenador deve confirmar as unidades com a FIAP. Até lá, a pendência permanece
+> aberta e nenhuma unidade é presumida.
 
 ---
 
@@ -126,7 +131,11 @@ Linhas por cenário            : [4]
 Culturas por cenário          : [4]
 ```
 
-Isso significa que a base tem **156 linhas mas só 39 observações climáticas independentes**.
+Isso significa que a base tem **156 linhas mas descreve só 39 cenários climáticos distintos**.
+
+⚠️ Note a formulação: **cenários distintos**, não "observações independentes". Sem data, local ou
+origem, não é possível verificar se esses 39 cenários são estatisticamente independentes entre si —
+podem, por exemplo, vir de anos consecutivos da mesma região.
 
 **Essas quatro linhas não são duplicatas.** Elas têm rendimentos diferentes porque descrevem
 culturas diferentes sob o mesmo clima. **Não remover.**
@@ -189,21 +198,22 @@ Documentação: [GroupShuffleSplit](https://scikit-learn.org/stable/modules/gene
 
 ---
 
-## 7. Validação cruzada
+## 7. Validação cruzada **aninhada**
 
 ```python
 from sklearn.model_selection import GroupKFold
 
+# Particoes EXTERNAS - as mesmas para todas as alternativas
 validacao_cruzada = GroupKFold(n_splits=5)
 PARTICOES = list(validacao_cruzada.split(
     desenvolvimento, desenvolvimento[ALVO], groups=desenvolvimento["cenario"]
 ))
 ```
 
-**Regra 4 — as partições são calculadas apenas sobre o desenvolvimento, e todas as alternativas
-usam exatamente as mesmas.** `GroupKFold` é determinístico e não precisa de semente.
+**Regra 4 — as partições externas são calculadas apenas sobre o desenvolvimento, e todas as
+alternativas usam exatamente as mesmas.** `GroupKFold` é determinístico e não precisa de semente.
 
-### Partições obtidas
+### Partições externas obtidas
 
 | Partição | Linhas treino | Linhas validação | Cenários treino | Cenários validação |
 | --- | --- | --- | --- | --- |
@@ -213,7 +223,50 @@ usam exatamente as mesmas.** `GroupKFold` é determinístico e não precisa de s
 | 3 | 100 | 24 | 25 | 6 |
 | 4 | 100 | 24 | 25 | 6 |
 
-Documentação: [GroupKFold](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GroupKFold.html)
+### Regra 4b — a busca de hiperparâmetros roda DENTRO do treino de cada partição
+
+Se o mesmo conjunto escolhe os hiperparâmetros e depois mede o resultado dessa escolha, a métrica
+reportada incorpora o ganho da própria seleção e sai otimista. O desenho correto é aninhado:
+
+```
+para cada uma das 5 partições EXTERNAS:
+    ├── treino externo  ──► GridSearchCV com GroupKFold de 3 partições INTERNAS
+    │                        (formadas só com os cenários do treino externo)
+    └── validação externa ──► previsão, nunca vista pela busca
+```
+
+```python
+N_PARTICOES_INTERNAS = 3
+
+for indices_treino, indices_validacao in PARTICOES:
+    X_treino, y_treino = X_dev.iloc[indices_treino], y_dev[indices_treino]
+    grupos_treino = grupos_dev[indices_treino]
+
+    particoes_internas = list(GroupKFold(n_splits=N_PARTICOES_INTERNAS).split(
+        X_treino, y_treino, groups=grupos_treino))          # agrupado tambem no nivel interno
+
+    busca = GridSearchCV(modelo, grade, cv=particoes_internas,
+                         scoring="neg_mean_absolute_error", n_jobs=N_JOBS).fit(X_treino, y_treino)
+    previsto[indices_validacao] = busca.best_estimator_.predict(X_dev.iloc[indices_validacao])
+```
+
+**Isso importa na prática.** Quando a busca usava as partições externas, a árvore de decisão
+aparecia com MAE 4.340, abaixo da referência; com a busca aninhada, seu MAE é 4.800, **acima** da
+referência. A ordem entre alternativas mudou.
+
+Cada partição externa pode escolher hiperparâmetros diferentes — isso é esperado, e a variação entre
+elas é um indicador de estabilidade que o notebook reporta.
+
+**O que o aninhamento não resolve:** escolher a alternativa vencedora olhando estas mesmas métricas
+continua sendo uma seleção. A confirmação independente depende do teste reservado (seção 10).
+
+**Regra 4c — um único nível de paralelismo.** `N_JOBS = 1` no notebook inteiro. Com 124 linhas o
+custo é baixo, e a execução sequencial evita o encadeamento de processos do joblib/loky, que no
+Windows deixa rastros de encerramento no terminal.
+
+Documentação:
+[GroupKFold](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GroupKFold.html) ·
+[validação aninhada](https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html)
 
 ---
 
@@ -276,24 +329,40 @@ def calcular_metricas(observado, previsto):
 
 Este é o ponto metodológico central da Entrega 1.
 
-A cultura sozinha explica **98,8%** da variância do rendimento. Uma referência que apenas prevê a
-média da cultura, ignorando completamente o clima, obtém **R² = 0,987**. Portanto **um R² global
-alto não demonstra nada**: mostra apenas que o modelo distingue quatro culturas de escalas muito
-diferentes.
+Numa decomposição descritiva da variância no desenvolvimento, a diferença entre as médias das
+culturas responde por **98,8%** da soma de quadrados do rendimento — uma decomposição estatística
+nesta amostra, não uma medida de causa. Na prática, uma referência que apenas prevê a média da
+cultura, ignorando o clima, obtém **R² = 0,987**. Portanto **um R² global alto não é suficiente,
+isoladamente**, para demonstrar que um modelo aprendeu algo além de distinguir quatro culturas de
+escalas muito diferentes.
 
 **Comparações obrigatórias:**
 
 1. Contra `DummyRegressor(strategy="mean")` — piso absoluto.
 2. Contra a **referência da média da cultura** — a comparação que realmente importa.
-3. **R², MAE e MAPE calculados dentro de cada cultura**, a partir das previsões de validação.
+3. **MAE, R² e MAPE calculados dentro de cada cultura**, a partir das previsões de validação.
 
-Interpretação do R² dentro da cultura:
+### Regra 8b — declarar a métrica de "supera a referência" e calculá-la por código
 
-| Valor | Significado |
-| --- | --- |
-| **> 0** | o modelo prevê melhor do que a média da própria cultura → **o clima acrescenta informação** |
-| ≈ 0 | equivale a prever a média da cultura → o clima não acrescentou nada |
-| < 0 | pior do que prever a média da cultura |
+⚠️ **Um R² negativo NÃO significa perder para a referência.** O zero do R² corresponde à média da
+cultura **no conjunto avaliado**, enquanto a referência do projeto usa médias aprendidas **no treino
+de cada partição**. Por isso a própria referência tem R² levemente negativo (entre −0,02 e −0,15).
+
+Exemplo real desta base: a regressão linear tem R² = −0,013 no dendê e **supera** a referência, cujo
+R² ali é −0,039.
+
+Regras práticas:
+
+- Comparar cada alternativa **diretamente com a referência**, na mesma cultura e na mesma métrica —
+  nunca contra o zero.
+- **Declarar a métrica usada.** No notebook, "supera a referência" significa **MAE menor dentro da
+  cultura**; o julgamento pelo R² é exibido ao lado.
+- As duas métricas **podem discordar**: a regressão linear com log do alvo tem MAE menor que o da
+  referência nas quatro culturas, mas R² maior em apenas duas. Quando discordam, a conclusão depende
+  da métrica, e isso precisa estar dito.
+- **Gerar essas indicações por código**, comparando com a linha da referência, em vez de escrever
+  tabelas à mão — foi assim que uma versão anterior deste projeto afirmou incorretamente que a
+  regressão linear só superava a referência no arroz.
 
 ### Referência da média da cultura
 
@@ -315,22 +384,45 @@ class MediaDaCultura(BaseEstimator, RegressorMixin):
 
 ## 10. Uso do conjunto de teste
 
-**Regra 9 — o teste reservado é usado uma única vez, no fechamento.**
+**Regra 9 — feche as escolhas antes de olhar o teste, e não volte atrás depois de olhar.**
 
-Nesta etapa ele **não foi tocado**. Nenhuma decisão (divisão, número de clusters, hiperparâmetros,
-transformação do alvo) usou o teste.
+Nesta etapa o teste **não foi tocado**. Nenhuma decisão (divisão, número de clusters,
+hiperparâmetros, transformação do alvo) usou o conjunto reservado.
 
-A seção 9 do notebook está implementada e travada por `EXECUTAR_TESTE_FINAL = False`. Ela roda sem
-erro e imprime o estado pendente, sem avaliar nada.
+### O que invalida o teste, e o que não invalida
+
+| Ação | Invalida? |
+| --- | --- |
+| Reexecutar o notebook e obter os mesmos números, para conferir reprodutibilidade | **Não.** O procedimento é determinístico. |
+| O professor executar o notebook inteiro na correção | **Não.** A execução completa precisa continuar possível na entrega. |
+| Olhar o resultado do teste e **então** trocar de algoritmo, ajustar hiperparâmetros ou escolher outra transformação | **Sim.** A métrica deixa de ser independente. |
+| Avaliar várias alternativas no teste e reportar a melhor | **Sim.** É seleção pelo teste. |
+
+Ou seja: a regra **não** é "execute uma vez e nunca mais". É **não usar o resultado do teste para
+escolher ou ajustar alternativas**.
+
+### Regra 9b — a alternativa avaliada é parametrizada
+
+A seção 9 do notebook **não fixa nenhum modelo no código da avaliação**. Ela lê:
+
+```python
+ALTERNATIVA_FINAL = None      # a frente ML registra aqui a alternativa escolhida
+EXECUTAR_TESTE_FINAL = False  # trava de protocolo
+```
+
+`CONFIGURACOES_FINAIS` reúne as cinco alternativas do catálogo mais as três variantes com log do
+alvo, cada uma com pipeline, transformações e grade registrados. Se `ALTERNATIVA_FINAL` continuar
+`None`, a avaliação falha com mensagem explícita em vez de avaliar um modelo qualquer — o notebook
+verifica isso a cada execução.
 
 **Condições para destravar:**
 
-1. A frente ML fecha a escolha de algoritmo e hiperparâmetros com base **apenas** na seção 8.
-2. O grupo confirma que nenhuma outra alternativa será testada.
-3. `EXECUTAR_TESTE_FINAL = True` e o notebook é executado inteiro **uma vez**.
+1. A frente ML fecha a escolha com base **apenas** na seção 8 e registra `ALTERNATIVA_FINAL`.
+2. O grupo confirma que nenhuma outra alternativa será comparada depois.
+3. `EXECUTAR_TESTE_FINAL = True` e o notebook é executado.
 
-Se depois de ver o resultado do teste alguém quiser mudar o modelo, a métrica final deixa de ser
-independente e precisa ser declarada como tal.
+Se, depois de ver o resultado, o grupo decidir mudar de modelo, a métrica final deixa de ser
+independente e isso precisa ser declarado no relatório.
 
 Cenários reservados (não usar em nenhuma análise até o fechamento):
 
@@ -359,14 +451,18 @@ Divergências de versão de `scikit-learn` podem alterar levemente resultados de
 
 ---
 
-## 12. Resumo das nove regras
+## 12. Resumo das regras
 
 1. O CSV original é imutável; confira o hash.
 2. Uma única semente, `SEED = 42`, no projeto inteiro.
 3. `cenario` agrupa a divisão; nunca é entrada de modelo.
-4. As partições vêm só do desenvolvimento e são as mesmas para todos.
+4. As partições externas vêm só do desenvolvimento e são as mesmas para todos; a busca de
+   hiperparâmetros roda **dentro do treino de cada partição** (validação aninhada).
 5. Toda transformação de entrada vive dentro do pipeline.
 6. Toda transformação do alvo é aprendida só no treino.
 7. Uma única função de métricas para todas as alternativas.
-8. Sempre reportar métricas **por cultura** e comparar com a referência da média da cultura.
-9. O teste reservado é usado **uma vez**, no fechamento.
+8. Sempre reportar métricas **por cultura**, comparar com a referência da média da cultura (nunca
+   com o zero do R²) e **declarar a métrica** usada para dizer "supera a referência".
+9. Feche as escolhas **antes** de olhar o teste reservado e não volte atrás depois; reexecutar o
+   notebook para conferir reprodutibilidade não invalida nada.
+10. A alternativa avaliada no teste é **parametrizada** (`ALTERNATIVA_FINAL`), nunca fixada no código.
