@@ -35,7 +35,7 @@ compara cinco algoritmos de regressão para prever a produtividade.
 | Integrante | Nome completo | RM |
 | --- | --- | --- |
 | Coordenador | ⏳ *pendente* | ⏳ *pendente* |
-| Larissa | ⏳ *pendente* | ⏳ *pendente* |
+| Larissa | Larissa da Silva Marcelino | RM571790 |
 | Elton | ⏳ *pendente* | ⏳ *pendente* |
 | Matheus | ⏳ *pendente* | ⏳ *pendente* |
 
