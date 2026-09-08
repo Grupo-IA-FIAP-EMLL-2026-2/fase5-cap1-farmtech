@@ -100,11 +100,9 @@ Protocolo de dados e avaliação: [`docs/CONTRATO_DADOS.md`](docs/CONTRATO_DADOS
 
 ## Entrega 2 — Computação em nuvem (AWS)
 
-> ### ⏳ PENDENTE — cotações não realizadas
->
-> A especificação, o checklist e os pontos de atenção já estão documentados em
-> [`docs/aws/README.md`](docs/aws/README.md). **Faltam as cotações na calculadora oficial**, as
-> capturas de tela e a redação da justificativa.
+As estimativas foram realizadas na AWS Pricing Calculator em 08/09/2026. A
+especificação, o checklist e os critérios de evidência estão em
+[`docs/aws/README.md`](docs/aws/README.md).
 
 Esta seção comparará o custo de uma máquina Linux On-Demand (100%) entre **São Paulo (`sa-east-1`)**
 e **Norte da Virgínia (`us-east-1`)**, com a configuração exigida pelo enunciado:
@@ -122,13 +120,55 @@ legal de armazenamento no exterior.
 
 | Item | Situação |
 | --- | --- |
-| Cotação São Paulo | ⏳ pendente |
-| Cotação Norte da Virgínia | ⏳ pendente |
-| Capturas da calculadora | ⏳ pendente |
-| Tabela comparativa de custos | ⏳ pendente |
-| Justificativa técnica | ⏳ pendente |
+| Cotação São Paulo | ✅ concluída |
+| Cotação Norte da Virgínia | ✅ concluída |
+| Capturas da calculadora | ✅ concluídas |
+| Tabela comparativa de custos | ✅ concluída |
+| Justificativa técnica | ✅ concluída |
 
-> Nenhum preço, link ou captura foi incluído neste repositório, porque nenhum foi obtido ainda.
+### Premissas da cotação
+
+As duas regiões foram comparadas com uma instância EC2 `t4g.micro`, Linux,
+instância compartilhada, On-Demand, uso contínuo de 730 h/mês e volume EBS
+`gp3` de 50 GB. Não foram incluídos snapshots, transferência de dados
+adicional, Elastic IP, monitoramento detalhado, IOPS adicionais ou throughput
+adicional.
+
+A `t4g.micro` atende aos requisitos do enunciado: 2 vCPU, 1 GiB de memória e
+rede de até 5 Gbps. Ela usa processador AWS Graviton (arquitetura ARM); para o
+escopo demonstrativo, a aplicação deve ser implantada com dependências
+compatíveis com essa arquitetura.
+
+O enunciado usa o termo “HD”, mas os volumes HDD `st1` e `sc1` exigem no mínimo
+125 GiB. Por isso, foi adotado EBS `gp3` de 50 GB como armazenamento de uso
+geral, sem provisionamento adicional de desempenho.
+
+### Comparação de custos mensais
+
+| Componente | São Paulo (`sa-east-1`) | Norte da Virgínia (`us-east-1`) |
+| --- | ---: | ---: |
+| Instância EC2 `t4g.micro` | US$ 9,78 | US$ 6,13 |
+| Armazenamento EBS `gp3`, 50 GB | US$ 7,60 | US$ 4,00 |
+| **Total mensal** | **US$ 17,38** | **US$ 10,13** |
+
+O custo conjunto das duas estimativas é US$ 27,51/mês. São Paulo custa
+US$ 7,25 a mais por mês, ou aproximadamente 71,6% acima do custo da Virgínia
+do Norte.
+
+Evidências da calculadora: [resumo das duas regiões](docs/aws/calculadora_resumo_duas_regioes.jpg)
+e [custos mensais por região](docs/aws/calculadora_custos_por_regiao.jpg).
+
+### Decisão de região
+
+**Solução mais barata:** Norte da Virgínia, com custo mensal estimado de
+US$ 10,13.
+
+**Região escolhida para o cenário do projeto:** São Paulo. Embora tenha custo
+superior, os dados dos sensores e a API do cenário estão no Brasil; manter a
+aplicação na região brasileira reduz a distância de rede e favorece o acesso
+rápido aos dados. A escolha também respeita a restrição de armazenamento no
+exterior proposta pelo enunciado. Essa é uma premissa do exercício, não uma
+afirmação de proibição legal universal.
 
 ---
 
