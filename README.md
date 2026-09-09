@@ -31,12 +31,12 @@ compara cinco algoritmos de regressão para prever a produtividade.
 
 ## Equipe
 
-| Integrante | Nome completo | RM | Responsabilidade |
+| Integrante | Nome completo | RM |
 | --- | --- | --- | --- |
-| Coordenador | Lucas Carvalho Cordeiro | RM570388 | Estruturação da entrega, integração geral, roteiro e narração do vídeo |
-| Larissa | Larissa da Silva Marcelino | RM571790 | Frontend/dashboard e edição do vídeo |
-| Elton | Elton Dias | RM572530 | APIs/backend |
-| Matheus | Matheus Fontes | RM570457 | Banco de dados |
+| Coordenador | Lucas Carvalho Cordeiro | RM570388 |
+| Larissa | Larissa da Silva Marcelino | RM571790 | 
+| Elton | Elton Dias | RM572530 |
+| Matheus | Matheus Fontes | RM570457 |
 
 ---
 
