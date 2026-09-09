@@ -32,7 +32,7 @@ compara cinco algoritmos de regressão para prever a produtividade.
 ## Equipe
 
 | Integrante | Nome completo | RM |
-| --- | --- | --- | --- |
+| --- | --- | --- |
 | Coordenador | Lucas Carvalho Cordeiro | RM570388 |
 | Larissa | Larissa da Silva Marcelino | RM571790 | 
 | Elton | Elton Dias | RM572530 |
