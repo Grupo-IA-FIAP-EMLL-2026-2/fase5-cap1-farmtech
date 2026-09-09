@@ -8,11 +8,10 @@ rendimento, o trabalho explora tendências por clusterização, investiga cenár
 compara cinco algoritmos de regressão para prever a produtividade.
 
 > ### 🚧 Estado do projeto: em desenvolvimento
-> O núcleo técnico da Entrega 1 está **executado e revisado**; faltam a escolha do modelo, o teste
-> final e os itens de entrega indicados abaixo. A Entrega 2 (AWS) tem a
-> documentação e o checklist prontos, mas **as cotações ainda não foram feitas**. Os protótipos do
-> "Ir Além" têm arquitetura e contrato de mensagens especificados, mas **ainda não foram
-> implementados**. Nenhum dos quatro vídeos foi gravado.
+> A Entrega 1 (ML) está **executada, revisada e com o teste reservado avaliado** (seção 9 do
+> notebook). A Entrega 2 (AWS) tem a cotação nas duas regiões concluída, com evidências e
+> justificativa. Os protótipos do "Ir Além" têm arquitetura e contrato de mensagens especificados,
+> mas **ainda não foram implementados**. Nenhum dos quatro vídeos foi gravado.
 > Pendências detalhadas em [`docs/CONTINUIDADE_EQUIPE.md`](docs/CONTINUIDADE_EQUIPE.md).
 
 ---
@@ -43,15 +42,12 @@ compara cinco algoritmos de regressão para prever a produtividade.
 
 ## Entrega 1 — Machine Learning
 
-### 👉 [Abrir o notebook: `notebooks/farmtech_desenvolvimento.ipynb`](notebooks/farmtech_desenvolvimento.ipynb)
+### 👉 [Abrir o notebook: `notebooks/MatheusFontes_rm570457_pbl_fase4.ipynb`](notebooks/MatheusFontes_rm570457_pbl_fase4.ipynb)
 
 **Toda a solução, os resultados e as interpretações estão no notebook.** Ele é o relatório do
 trabalho: análise exploratória, clusterização, investigação de outliers, a comparação dos cinco
 regressores e a discussão de limitações — com todas as células executadas e as saídas preservadas.
 Este README não repete esse conteúdo; ele apenas conduz o leitor até lá.
-
-> ⏳ **PENDENTE:** o enunciado exige que o arquivo se chame `NomeCompleto_rmXXXXX_pbl_fase4.ipynb`.
-> A renomeação depende dos nomes e RMs.
 
 ### O que o notebook contém
 
@@ -64,7 +60,7 @@ Este README não repete esse conteúdo; ele apenas conduz o leitor até lá.
 | 6 | Clusterização dos cenários climáticos, com escolha justificada do número de grupos |
 | 7 | Investigação de outliers climáticos e de rendimento |
 | 8 | Comparação dos cinco regressores em validação cruzada aninhada |
-| 9 | Avaliação no teste reservado — **pendente por decisão de protocolo** |
+| 9 | Avaliação no teste reservado — **executado**, ver seção 9.1 |
 | 10 | Conclusões, limitações e pendências |
 
 ### A base de dados
@@ -85,7 +81,9 @@ Entre os cinco algoritmos e as duas referências avaliados em validação cruzad
 Aleatória é a única alternativa com erro menor que o de uma referência que usa apenas a cultura, nas
 quatro culturas.** A discussão completa — incluindo por que o R² global não basta para essa
 comparação e por que a vantagem ainda não está estatisticamente estabelecida — está na
-[seção 8 do notebook](notebooks/farmtech_desenvolvimento.ipynb).
+[seção 8 do notebook](notebooks/MatheusFontes_rm570457_pbl_fase4.ipynb). No teste reservado (seção
+9.1), essa vantagem se confirma em arroz e borracha, mas **não em dendê**, que generaliza mal fora do
+desenvolvimento — leitura honesta que o notebook mantém, sem reabrir a escolha do modelo.
 
 ![Comparação dos modelos](docs/figuras/fig10_comparacao_modelos.png)
 
@@ -224,7 +222,7 @@ Quatro vídeos de até 5 minutos, publicados como **não listados** no YouTube.
 
 ## Instalação e execução
 
-Ambiente testado em **Windows 11 com Python 3.12.10**, em 06/09/2026.
+Ambiente testado em **Windows 11 com Python 3.13.5**, em 08/09/2026.
 
 ```powershell
 # 1. Clonar e entrar na pasta do projeto
@@ -242,7 +240,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
 # 5. Abrir o notebook
-jupyter lab notebooks\farmtech_desenvolvimento.ipynb
+jupyter lab notebooks\MatheusFontes_rm570457_pbl_fase4.ipynb
 ```
 
 No Jupyter, use **Kernel → Restart Kernel and Run All Cells** para executar do zero.
@@ -251,7 +249,7 @@ Tempo aproximado: **cerca de 1 minuto e 20 segundos**.
 Para executar sem abrir a interface:
 
 ```powershell
-.\.venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks\farmtech_desenvolvimento.ipynb
+.\.venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks\MatheusFontes_rm570457_pbl_fase4.ipynb
 ```
 
 > Se o PowerShell bloquear a ativação do ambiente, rode uma vez na sessão:
@@ -276,7 +274,7 @@ fase5-cap1-farmtech/
 │   └── crop_yield.csv                 # base original, preservada e verificada por hash
 │
 ├── notebooks/
-│   └── farmtech_desenvolvimento.ipynb # ⭐ Entrega 1, executado com as saídas salvas
+│   └── MatheusFontes_rm570457_pbl_fase4.ipynb # ⭐ Entrega 1, executado com as saídas salvas
 │
 ├── docs/
 │   ├── CONTRATO_DADOS.md              # protocolo de dados e avaliação (leitura obrigatória)
@@ -304,16 +302,11 @@ Organizadas por frente. Os responsáveis serão definidos pelo grupo.
 | Frente | Pendência |
 | --- | --- |
 | **Coordenação** | Confirmar unidades de `Yield` e `Precipitation` com a FIAP |
-| **Coordenação** | Reunir nomes completos e RMs; renomear o notebook |
 | **Coordenação** | Disponibilizar o repositório como público e conferir o acesso antes da entrega |
-| **ML** | Revisar a seção 8 e definir `ALTERNATIVA_FINAL` |
-| **ML** | Executar a seção 9 (teste reservado) após o fechamento das escolhas |
 | **ML** | Classificador demonstrativo do Ir Além 2 |
 | **IoT / simulação** | Circuito Wokwi com dois sensores virtuais distintos |
 | **IoT / simulação** | Firmware com Wi-Fi e publicação MQTT |
 | **IoT / simulação** | Receptor Python e registro das sessões |
-| **AWS / documentação** | Cotação nas duas regiões, com capturas |
-| **AWS / documentação** | Justificativa técnica e consolidação do README |
 | **Vídeos** | Gravar e publicar os quatro vídeos |
 
 Detalhamento, critérios de pronto e dependências em

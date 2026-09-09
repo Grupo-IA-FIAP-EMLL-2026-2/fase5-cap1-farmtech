@@ -38,7 +38,7 @@ documentação e o checklist; faltam as cotações.
 
 ## Antes de qualquer coisa: preparar o ambiente
 
-Testado em Windows 11 com Python 3.12.10, em 06/09/2026.
+Testado em Windows 11 com Python 3.13.5, em 08/09/2026.
 
 ```powershell
 # 1. Na raiz do projeto
@@ -55,7 +55,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
 # 5. Abrir o notebook
-jupyter lab notebooks\farmtech_desenvolvimento.ipynb
+jupyter lab notebooks\MatheusFontes_rm570457_pbl_fase4.ipynb
 ```
 
 > Se o PowerShell bloquear a ativação, rode uma vez:
@@ -73,6 +73,10 @@ Esperado: `07B3335F497E08E705B5835EE334426AC16CB24732C1BFAA994254D39F771B1B`
 
 # Frente ML — *responsável a definir*
 
+> ✅ **Tarefas ML-1 a ML-3 concluídas em 08/09/2026.** `ALTERNATIVA_FINAL` foi fechada em Floresta
+> Aleatória, o teste reservado foi executado e interpretado (seção 9.1 do notebook). Só a
+> **Tarefa ML-4** (classificador demonstrativo do Ir Além 2) segue pendente, e depende da frente IoT.
+
 ## O que já está pronto e testado
 
 Tudo na Entrega 1 abaixo já foi **implementado e executado**, não é plano:
@@ -86,13 +90,13 @@ Tudo na Entrega 1 abaixo já foi **implementado e executado**, não é plano:
 | **Cinco regressores + duas referências**, em validação aninhada | ✅ executado |
 | Verificação de sensibilidade com log do alvo | ✅ executado |
 | Diagnóstico do mau desempenho do KNN | ✅ executado |
-| Avaliação no teste reservado | ⏸️ **travada, esperando você** |
+| Avaliação no teste reservado | ✅ executado (seção 9.1) |
 
 ## Arquivos para abrir
 
 1. **[`docs/CONTRATO_DADOS.md`](CONTRATO_DADOS.md)** — comece por aqui e siga todas as regras.
-2. **[`notebooks/farmtech_desenvolvimento.ipynb`](../notebooks/farmtech_desenvolvimento.ipynb)** —
-   seções 8 e 9 são as suas.
+2. **[`notebooks/MatheusFontes_rm570457_pbl_fase4.ipynb`](../notebooks/MatheusFontes_rm570457_pbl_fase4.ipynb)** —
+   seções 8 e 9 já fechadas; a seção 9.1 registra a leitura do resultado.
 3. **`docs/resultados_modelos.csv`** e **`docs/resultados_por_cultura.csv`** — tabelas exportadas.
 4. **`docs/protocolo_divisao.json`** — a divisão exata, para você reproduzir.
 
@@ -390,8 +394,8 @@ Roteiro sugerido para o vídeo 1, já que o material existe:
 | # | Tarefa | Bloqueia |
 | --- | --- | --- |
 | 1 | Confirmar com a FIAP as unidades de `Yield` e `Precipitation` | Interpretação; uma conversão pode exigir atualização das métricas e dos gráficos |
-| 2 | Reunir nomes completos e RMs dos quatro integrantes | Nomeação do notebook e README |
-| 3 | **Renomear** `farmtech_desenvolvimento.ipynb` → `NomeCompleto_rmXXXXX_pbl_fase4.ipynb` | Barema |
+| 2 | ~~Reunir nomes completos e RMs dos quatro integrantes~~ — feito em 08/09/2026 | — |
+| 3 | ~~Renomear `farmtech_desenvolvimento.ipynb`~~ — feito: `MatheusFontes_rm570457_pbl_fase4.ipynb` | — |
 | 4 | Confirmar no portal a inconsistência "Fase 5" com sufixo `pbl_fase4.ipynb` | Nomeação |
 | 5 | Disponibilizar o repositório como público e conferir o acesso antes da entrega | Entrega |
 | 6 | Integrar o material das frentes no notebook e no README | Entrega |

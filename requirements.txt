@@ -1,7 +1,7 @@
 # FarmTech Solutions - Fase 5
 # Versoes efetivamente instaladas e usadas para executar
-# notebooks/farmtech_desenvolvimento.ipynb de ponta a ponta em 06/09/2026.
-# Ambiente testado: Windows 11, Python 3.12.10.
+# notebooks/MatheusFontes_rm570457_pbl_fase4.ipynb de ponta a ponta em 08/09/2026.
+# Ambiente testado: Windows 11, Python 3.13.5.
 
 # --- Analise de dados e machine learning ---
 numpy==2.3.3

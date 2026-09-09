@@ -5,7 +5,7 @@ Versão 1.1 — 06/09/2026 (revisada após revisão independente)
 
 Este documento fixa as regras que **todos os integrantes devem seguir** ao trabalhar com
 `data/crop_yield.csv`. O mesmo protocolo está implementado nas seções 3 e 4 do notebook
-`notebooks/farmtech_desenvolvimento.ipynb`, e o resultado da divisão fica registrado em
+`notebooks/MatheusFontes_rm570457_pbl_fase4.ipynb`, e o resultado da divisão fica registrado em
 `docs/protocolo_divisao.json`.
 
 O objetivo é simples: **qualquer pessoa do grupo que seguir este contrato obtém exatamente a mesma
@@ -435,11 +435,11 @@ bbac82ed07b9  d19ed8808b8c  dcbf3da4c6bb  f3dacef6642f
 
 ## 11. Versões do ambiente
 
-Versões efetivamente usadas na execução de 06/09/2026 (ver `requirements.txt`):
+Versões efetivamente usadas na execução de 08/09/2026 (ver `requirements.txt`):
 
 | Pacote | Versão |
 | --- | --- |
-| Python | 3.12.10 |
+| Python | 3.13.5 |
 | numpy | 2.3.3 |
 | pandas | 2.3.2 |
 | scikit-learn | 1.7.1 |

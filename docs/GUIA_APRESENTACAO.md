@@ -13,7 +13,7 @@ explicar os resultados e apresentar as frentes disponíveis para que cada um esc
 
 Deixe aberto:
 
-1. `notebooks/farmtech_desenvolvimento.ipynb` (já executado, com as saídas)
+1. `notebooks/MatheusFontes_rm570457_pbl_fase4.ipynb` (já executado, com as saídas)
 2. Este guia
 3. `docs/CONTINUIDADE_EQUIPE.md`
 
@@ -21,7 +21,7 @@ E rode uma vez para conferir que o ambiente está funcionando:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
-jupyter lab notebooks\farmtech_desenvolvimento.ipynb
+jupyter lab notebooks\MatheusFontes_rm570457_pbl_fase4.ipynb
 ```
 
 ---
