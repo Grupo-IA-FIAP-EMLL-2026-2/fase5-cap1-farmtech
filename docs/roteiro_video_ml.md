@@ -86,7 +86,7 @@
 - [x] Confirmar `ALTERNATIVA_FINAL` preenchido no notebook (Floresta Aleatória, não `None`)
 - [x] Confirmar que a Seção 9 já tem saída executada
 - [x] Preencher os campos de valores acima com os resultados vistos na tela
-- [ ] Gravar tela rolando pelas seções na ordem do roteiro (não precisa ler código linha a linha, só mostrar que existe e que rodou)
-- [ ] Narração até 5 minutos
-- [ ] Publicar como "não listado" no YouTube
-- [ ] Colar o link na tabela de Vídeos do README
+- [x] Gravar tela rolando pelas seções na ordem do roteiro (não precisa ler código linha a linha, só mostrar que existe e que rodou)
+- [x] Narração até 5 minutos
+- [x] Publicar como "não listado" no YouTube
+- [x] Colar o link na tabela de Vídeos do README

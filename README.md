@@ -208,12 +208,12 @@ Quatro vídeos de até 5 minutos, publicados como **não listados** no YouTube.
 
 | # | Vídeo | Link | Situação |
 | --- | --- | --- | --- |
-| 1 | Entrega 1 — Machine Learning | ⏳ *pendente* | Depende do fechamento do teste final |
-| 2 | Entrega 2 — Comparação AWS | ⏳ *pendente* | Depende da cotação |
+| 1 | Entrega 1 — Machine Learning | [Assistir](https://youtu.be/xpcw7nJHQtU) | ✅ Publicado |
+| 2 | Entrega 2 — Comparação AWS | [Assistir](https://youtu.be/6Z77Y1DQH4A) | ✅ Publicado |
 | 3 | Ir Além 1 — Coleta e comunicação | ⏳ *pendente* | Depende do protótipo |
 | 4 | Ir Além 2 — Classificação de saúde | ⏳ *pendente* | Depende do classificador |
 
-> ⏳ **PENDENTE:** nenhum vídeo foi gravado e os responsáveis ainda não foram definidos. Os links
+> ⏳ **PENDENTE:** os vídeos 3 e 4 ainda não foram gravados. Os links
 > serão inseridos quando existirem — nenhuma URL foi inventada aqui.
 >
 > Nos vídeos 3 e 4 é obrigatório declarar que o hardware é simulado.

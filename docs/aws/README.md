@@ -118,4 +118,4 @@ não como proibição legal universal. A pergunta 2 do enunciado é uma hipótes
 - [ ] Tipo de volume justificado
 - [ ] As duas perguntas do enunciado respondidas separadamente
 - [ ] Seção da Entrega 2 do README preenchida, com imagens
-- [ ] Vídeo 2 gravado, não listado, com o link no README
+- [x] Vídeo 2 gravado, não listado, com o link no README
