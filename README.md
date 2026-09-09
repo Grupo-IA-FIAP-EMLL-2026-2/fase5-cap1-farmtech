@@ -11,7 +11,8 @@ compara cinco algoritmos de regressão para prever a produtividade.
 > A Entrega 1 (ML) está **executada, revisada e com o teste reservado avaliado** (seção 9 do
 > notebook). A Entrega 2 (AWS) tem a cotação nas duas regiões concluída, com evidências e
 > justificativa. Os protótipos do "Ir Além" têm arquitetura e contrato de mensagens especificados,
-> mas **ainda não foram implementados**. Nenhum dos quatro vídeos foi gravado.
+> mas **ainda não foram implementados**. Dois dos quatro vídeos já foram publicados (Entregas 1 e 2);
+> os dois do "Ir Além" ainda faltam.
 > Pendências detalhadas em [`docs/CONTINUIDADE_EQUIPE.md`](docs/CONTINUIDADE_EQUIPE.md).
 
 ---
